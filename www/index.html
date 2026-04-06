@@ -5,7 +5,245 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="color-scheme" content="dark">
   <title>Celular</title>
-  <link rel="stylesheet" href="style.css">
+  <style>
+* {
+  margin: 0; padding: 0; box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none; -webkit-user-select: none;
+}
+html, body {
+  height: 100%; overflow: hidden;
+  background: #0d1b2a;
+  font-family: 'Segoe UI', Arial, sans-serif;
+}
+#app {
+  display: flex; flex-direction: column;
+  height: 100vh; height: 100dvh;
+  max-width: 420px; margin: 0 auto;
+  background: #0d1b2a;
+  padding: env(safe-area-inset-top) 6px env(safe-area-inset-bottom) 6px;
+}
+
+/* ===== PANTALLA LCD ===== */
+#screen {
+  flex: 1;
+  background: #0a1628;
+  border: 2px solid #1a6a7a;
+  border-radius: 12px;
+  margin: 8px 4px 6px 4px;
+  padding: 12px 14px;
+  display: flex; flex-direction: column;
+  min-height: 0;
+  box-shadow: 0 0 12px rgba(26, 106, 122, 0.3);
+}
+#status-bar {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 10px; color: #5a9aaa; margin-bottom: 4px;
+}
+#clock {
+  font-size: 36px; font-weight: 700; color: #c0e8f0;
+  text-align: center; line-height: 1;
+  font-family: 'Courier New', monospace;
+  text-shadow: 0 0 10px rgba(100,200,220,0.3);
+}
+#date-display {
+  text-align: center; color: #5a9aaa; font-size: 11px; margin-bottom: 6px;
+}
+#display {
+  background: rgba(0,0,0,0.3); border-radius: 6px;
+  padding: 6px 10px; min-height: 30px;
+  display: flex; align-items: center; justify-content: center;
+}
+#display-text {
+  font-size: 22px; color: #e0f8ff; letter-spacing: 2px;
+  font-family: 'Courier New', monospace; font-weight: 700;
+  word-break: break-all;
+}
+#cursor-blink {
+  color: #40c8e0; font-size: 22px;
+  animation: blink 1s step-end infinite;
+}
+@keyframes blink { 50% { opacity: 0; } }
+
+#search-results {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  margin-top: 4px;
+}
+.search-result {
+  text-align: center; padding: 8px; cursor: pointer;
+  color: #c0e8f0;
+}
+.search-result-name {
+  font-weight: 700; font-size: 28px; display: block;
+  margin-bottom: 8px;
+}
+.search-result-number {
+  color: #5a9aaa; font-size: 20px; display: block;
+  font-family: 'Courier New', monospace; letter-spacing: 2px;
+}
+#contact-index {
+  color: #3a6a7a; font-size: 11px; margin-top: 8px;
+}
+
+/* ===== FILA FUNCIONES (radio, micrófono) ===== */
+#func-row {
+  display: flex; justify-content: space-between;
+  padding: 4px 20px; gap: 8px;
+}
+.func-btn {
+  width: 52px; height: 36px; border-radius: 10px;
+  border: 1px solid #1a5a6a; background: #0e2a3a;
+  color: #40b8d0; font-size: 18px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 0 6px rgba(40,180,220,0.2);
+}
+.func-btn:active { background: #1a3a4a; }
+.func-btn.mic { color: #e8a020; border-color: #6a5a20; box-shadow: 0 0 6px rgba(200,160,30,0.2); }
+
+/* ===== D-PAD + LLAMAR/COLGAR ===== */
+#nav-area {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 4px 12px;
+}
+.call-btn {
+  width: 52px; height: 44px; border: none; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: transform 0.1s;
+}
+.call-btn:active { transform: scale(0.92); }
+.call-green {
+  background: linear-gradient(180deg, #2ecc40, #1a9928);
+  box-shadow: 0 2px 8px rgba(46,204,64,0.3);
+}
+.call-red {
+  background: linear-gradient(180deg, #e74c3c, #c0392b);
+  box-shadow: 0 2px 8px rgba(231,76,60,0.3);
+}
+
+#dpad {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 6px;
+}
+.dpad-btn {
+  background: #1a2a3e; border: 1px solid #2a4a5e;
+  color: #70a0b0; display: flex; align-items: center;
+  justify-content: center; cursor: pointer;
+}
+.dpad-btn:active { background: #2a4a5e; }
+.dpad-arrow {
+  width: 44px; height: 30px; border-radius: 10px; font-size: 14px;
+}
+.dpad-center {
+  background: #2a3a50; font-weight: 700; font-size: 11px;
+  border-radius: 50%; width: 40px; height: 40px; color: #c0e0f0;
+  border: 1px solid #3a5a6e;
+}
+
+/* ===== TECLADO ===== */
+#keyboard {
+  flex: 1; display: flex; flex-direction: column;
+  gap: 5px; padding: 8px 2px 4px 2px;
+  justify-content: center;
+}
+.kb-row {
+  display: flex; gap: 4px; justify-content: center;
+}
+.kb-key {
+  flex: 1; max-width: 40px; height: 44px;
+  background: linear-gradient(180deg, #162a3a, #0e1e2e);
+  border: 1px solid #1a3a4a;
+  border-radius: 7px; color: #d0e8f0;
+  font-size: 17px; font-weight: 600;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: background 0.08s;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+.kb-key:active, .kb-key.pressing {
+  background: linear-gradient(180deg, #2a4a5e, #1a3a4e);
+  border-color: #40c8e0;
+  box-shadow: 0 0 8px rgba(40,200,224,0.3);
+}
+.kb-key.confirmed {
+  background: #1a4a3a; border-color: #40e080;
+}
+.kb-key.key-special {
+  background: linear-gradient(180deg, #1a3040, #122030);
+  color: #80b0c0; font-size: 20px;
+}
+.kb-key.key-send {
+  background: linear-gradient(180deg, #1a7acc, #1260aa);
+  color: #ffffff; font-size: 16px;
+  box-shadow: 0 2px 6px rgba(26,122,204,0.4);
+}
+.kb-space {
+  max-width: none; flex: 3;
+  font-size: 12px; letter-spacing: 3px; color: #80b0c0;
+}
+.kb-num-small {
+  background: linear-gradient(180deg, #1a4a5e, #0e3040);
+  border-color: #2a5a6a; color: #40c8e0;
+}
+
+/* ===== PREVIEW DE TECLA ===== */
+#key-preview {
+  position: fixed; top: 45%; left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(10,22,40,0.92);
+  border: 2px solid #40c8e0; border-radius: 16px;
+  width: 80px; height: 80px;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  z-index: 50;
+  box-shadow: 0 0 20px rgba(40,200,224,0.3);
+}
+#key-preview-char {
+  font-size: 36px; font-weight: 700; color: #ffffff;
+}
+#key-preview-bar {
+  width: 50px; height: 4px; background: #1a3a4a;
+  border-radius: 2px; margin-top: 6px; overflow: hidden;
+}
+#key-preview-fill {
+  width: 0%; height: 100%; background: #40c8e0;
+  border-radius: 2px; transition: width linear;
+}
+
+/* ===== SALIR ===== */
+#exit-hint {
+  text-align: center; color: #3a5a6a; font-size: 10px;
+  padding: 6px 20px; margin: 2px 40px;
+  background: #0e1e2e; border: 1px solid #1a3a4a;
+  border-radius: 8px; cursor: pointer;
+}
+
+/* ===== PANTALLA DE LLAMADA ===== */
+#call-screen {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(180deg, #0a1a2a, #0d1b2a);
+  z-index: 200; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 20px;
+}
+#call-info {
+  text-align: center; flex: 1;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+}
+#call-status { color: #40c8e0; font-size: 20px; margin-bottom: 12px; }
+#call-contact-name { color: #fff; font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+#call-number { color: #5a9aaa; font-size: 22px; font-family: 'Courier New', monospace; margin-bottom: 20px; }
+#call-timer { color: #5a9aaa; font-size: 28px; font-family: 'Courier New', monospace; }
+#call-actions { padding-bottom: 60px; }
+.call-end-big {
+  width: 90px; height: 90px; border-radius: 50%;
+  flex-direction: column; gap: 2px;
+}
+.call-end-big small { font-size: 11px; color: #fff; }
+
+.hidden { display: none !important; }
+  </style>
 </head>
 <body>
   <div id="app">
@@ -17,42 +255,36 @@
         <span id="battery">&#9608; 85%</span>
       </div>
       <div id="date-display"></div>
-
-      <!-- VISOR: lo que se escribe -->
       <div id="display">
         <span id="display-text"></span>
         <span id="cursor-blink">|</span>
       </div>
-
-      <!-- RESULTADO DE BUSQUEDA DE CONTACTOS -->
       <div id="search-results"></div>
     </div>
 
-    <!-- INDICADOR DE TECLA PRESIONADA -->
-    <div id="key-preview" class="hidden">
-      <span id="key-preview-char"></span>
-      <div id="key-preview-bar"><div id="key-preview-fill"></div></div>
+    <!-- FUNCIONES: radio / micrófono -->
+    <div id="func-row">
+      <button class="func-btn" title="Radio">&#128251;</button>
+      <button class="func-btn mic" title="Micrófono">&#127908;</button>
     </div>
 
-    <!-- FILA DE ACCION: LLAMAR + BORRAR -->
-    <div id="action-row">
-      <button id="btn-call" class="action-btn call-green" onclick="callSelected()">
+    <!-- D-PAD + LLAMAR/COLGAR -->
+    <div id="nav-area">
+      <button id="btn-call" class="call-btn call-green" onclick="callSelected()">
         <svg viewBox="0 0 24 24" width="24" height="24"><path fill="#fff" d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2a1.003 1.003 0 011.01-.24c1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.1.31.03.66-.25 1.02l-2.2 2.2z"/></svg>
-        <span>Llamar</span>
       </button>
-      <button id="btn-delete" class="action-btn delete-btn" onclick="deleteLast()">
-        <span>&larr;</span>
-        <span>Borrar</span>
-      </button>
-      <button id="btn-mode" class="action-btn mode-btn" onclick="toggleMode()">
-        <span id="mode-icon">123</span>
-        <span id="mode-label">Números</span>
+      <div id="dpad">
+        <button class="dpad-btn dpad-arrow" id="dpad-up" onclick="navigateContact(-1)">&#9650;</button>
+        <button class="dpad-btn dpad-center" id="dpad-ok">OK</button>
+        <button class="dpad-btn dpad-arrow" id="dpad-down" onclick="navigateContact(1)">&#9660;</button>
+      </div>
+      <button id="btn-hangup" class="call-btn call-red" onclick="clearDisplay()">
+        <svg viewBox="0 0 24 24" width="24" height="24"><path fill="#fff" d="M12 9c-1.6 0-3.15.25-4.6.72v3.1c0 .39-.23.74-.56.9-.98.49-1.87 1.12-2.66 1.85-.18.18-.43.28-.7.28-.28 0-.53-.11-.71-.29L.29 13.08a.956.956 0 010-1.36C3.42 8.63 7.46 7 12 7s8.58 1.63 11.71 4.72c.18.18.29.43.29.71 0 .28-.11.53-.29.71l-2.48 2.48c-.18.18-.43.29-.71.29-.27 0-.52-.1-.7-.28-.79-.73-1.68-1.36-2.66-1.85a.994.994 0 01-.56-.9v-3.1C15.15 9.25 13.6 9 12 9z"/></svg>
       </button>
     </div>
 
-    <!-- TECLADO DE LETRAS -->
-    <div id="keyboard" class="kb-letters">
-      <!-- Fila 1: Q W E R T Y U I O P -->
+    <!-- TECLADO QWERTY -->
+    <div id="keyboard">
       <div class="kb-row">
         <button class="kb-key" data-char="Q">Q</button>
         <button class="kb-key" data-char="W">W</button>
@@ -65,9 +297,7 @@
         <button class="kb-key" data-char="O">O</button>
         <button class="kb-key" data-char="P">P</button>
       </div>
-      <!-- Fila 2: A S D F G H J K L -->
       <div class="kb-row">
-        <div class="kb-spacer-half"></div>
         <button class="kb-key" data-char="A">A</button>
         <button class="kb-key" data-char="S">S</button>
         <button class="kb-key" data-char="D">D</button>
@@ -77,11 +307,9 @@
         <button class="kb-key" data-char="J">J</button>
         <button class="kb-key" data-char="K">K</button>
         <button class="kb-key" data-char="L">L</button>
-        <div class="kb-spacer-half"></div>
       </div>
-      <!-- Fila 3: Z X C V B N M -->
       <div class="kb-row">
-        <div class="kb-spacer"></div>
+        <button class="kb-key" data-char="Ñ">Ñ</button>
         <button class="kb-key" data-char="Z">Z</button>
         <button class="kb-key" data-char="X">X</button>
         <button class="kb-key" data-char="C">C</button>
@@ -89,40 +317,25 @@
         <button class="kb-key" data-char="B">B</button>
         <button class="kb-key" data-char="N">N</button>
         <button class="kb-key" data-char="M">M</button>
-        <div class="kb-spacer"></div>
+        <button class="kb-key key-special" onclick="deleteLast()" data-nodial="1">&#9003;</button>
       </div>
-      <!-- Fila 4: ESPACIO -->
       <div class="kb-row">
+        <button class="kb-key kb-num-small" data-char="1">1</button>
+        <button class="kb-key kb-num-small" data-char="2">2</button>
         <button class="kb-key kb-space" data-char=" ">ESPACIO</button>
+        <button class="kb-key kb-num-small" data-char=".">.</button>
+        <button class="kb-key key-send" onclick="callSelected()" data-nodial="1">&#128222;</button>
       </div>
     </div>
 
-    <!-- TECLADO DE NUMEROS (oculto por defecto) -->
-    <div id="numpad" class="hidden">
-      <div class="kb-row">
-        <button class="kb-key kb-num" data-char="1">1</button>
-        <button class="kb-key kb-num" data-char="2">2</button>
-        <button class="kb-key kb-num" data-char="3">3</button>
-      </div>
-      <div class="kb-row">
-        <button class="kb-key kb-num" data-char="4">4</button>
-        <button class="kb-key kb-num" data-char="5">5</button>
-        <button class="kb-key kb-num" data-char="6">6</button>
-      </div>
-      <div class="kb-row">
-        <button class="kb-key kb-num" data-char="7">7</button>
-        <button class="kb-key kb-num" data-char="8">8</button>
-        <button class="kb-key kb-num" data-char="9">9</button>
-      </div>
-      <div class="kb-row">
-        <button class="kb-key kb-num" data-char="*">*</button>
-        <button class="kb-key kb-num" data-char="0">0</button>
-        <button class="kb-key kb-num" data-char="#">#</button>
-      </div>
+    <!-- INDICADOR DE TECLA PRESIONADA -->
+    <div id="key-preview" class="hidden">
+      <span id="key-preview-char"></span>
+      <div id="key-preview-bar"><div id="key-preview-fill"></div></div>
     </div>
 
-    <!-- SALIR (oculto) -->
-    <div id="exit-hint">Mantener * 3 seg &rarr; salir</div>
+    <!-- SALIR -->
+    <div id="exit-hint">Mantener &#9881; 3 seg &rarr; salir</div>
   </div>
 
   <!-- PANTALLA DE LLAMADA ACTIVA -->
@@ -134,13 +347,232 @@
       <div id="call-timer">00:00</div>
     </div>
     <div id="call-actions">
-      <button id="call-end" class="action-btn call-red call-end-big" onclick="endCall()">
+      <button id="call-end" class="call-btn call-red call-end-big" onclick="endCall()">
         <svg viewBox="0 0 24 24" width="36" height="36"><path fill="#fff" d="M12 9c-1.6 0-3.15.25-4.6.72v3.1c0 .39-.23.74-.56.9-.98.49-1.87 1.12-2.66 1.85-.18.18-.43.28-.7.28-.28 0-.53-.11-.71-.29L.29 13.08a.956.956 0 010-1.36C3.42 8.63 7.46 7 12 7s8.58 1.63 11.71 4.72c.18.18.29.43.29.71 0 .28-.11.53-.29.71l-2.48 2.48c-.18.18-.43.29-.71.29-.27 0-.52-.1-.7-.28-.79-.73-1.68-1.36-2.66-1.85a.994.994 0 01-.56-.9v-3.1C15.15 9.25 13.6 9 12 9z"/></svg>
         <small>Colgar</small>
       </button>
     </div>
   </div>
 
-  <script src="app.js"></script>
+  <script>
+var typed = '';
+var contacts = [];
+var selectedContact = null;
+var filteredContacts = [];
+var contactIdx = 0;
+var callTimerInterval = null;
+var callSeconds = 0;
+var HOLD_TIME = 600;
+var holdTimer = null;
+var holdKey = null;
+
+function updateClock() {
+  var now = new Date();
+  document.getElementById('clock').textContent =
+    String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+  var dias = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+  var meses = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  document.getElementById('date-display').textContent =
+    dias[now.getDay()] + ' ' + now.getDate() + ' ' + meses[now.getMonth()];
+}
+
+function updateBattery() {
+  if (navigator.getBattery) {
+    navigator.getBattery().then(function(b) {
+      document.getElementById('battery').innerHTML = '&#9608; ' + Math.round(b.level*100) + '%';
+    });
+  }
+}
+
+function initKeyboard() {
+  document.querySelectorAll('.kb-key').forEach(function(key) {
+    if (key.getAttribute('data-nodial')) return;
+    key.addEventListener('touchstart', function(e) { e.preventDefault(); onKeyDown(key); }, {passive:false});
+    key.addEventListener('touchend', function(e) { e.preventDefault(); onKeyUp(key); });
+    key.addEventListener('touchcancel', function() { onKeyUp(key); });
+    key.addEventListener('mousedown', function(e) { e.preventDefault(); onKeyDown(key); });
+    key.addEventListener('mouseup', function() { onKeyUp(key); });
+    key.addEventListener('mouseleave', function() { onKeyUp(key); });
+  });
+}
+
+function onKeyDown(el) {
+  var ch = el.getAttribute('data-char');
+  if (!ch) return;
+  holdKey = el;
+  el.classList.add('pressing');
+  showPreview(ch);
+  startPreviewBar();
+  holdTimer = setTimeout(function() { confirmKey(ch, el); }, HOLD_TIME);
+}
+
+function onKeyUp(el) {
+  clearTimeout(holdTimer); holdTimer = null;
+  if (holdKey) { holdKey.classList.remove('pressing'); holdKey = null; }
+  hidePreview(); cancelPreviewBar();
+}
+
+function confirmKey(ch, el) {
+  holdTimer = null;
+  vibrate(40); playClick();
+  el.classList.remove('pressing');
+  el.classList.add('confirmed');
+  setTimeout(function() { el.classList.remove('confirmed'); }, 200);
+  typed += ch;
+  updateDisplay(); searchContacts();
+  hidePreview();
+}
+
+function showPreview(ch) {
+  document.getElementById('key-preview-char').textContent = ch === ' ' ? '⎵' : ch;
+  document.getElementById('key-preview').classList.remove('hidden');
+  document.getElementById('key-preview-fill').style.width = '0%';
+}
+function hidePreview() { document.getElementById('key-preview').classList.add('hidden'); }
+function startPreviewBar() {
+  var f = document.getElementById('key-preview-fill');
+  f.style.transition = 'none'; f.style.width = '0%';
+  requestAnimationFrame(function() {
+    f.style.transition = 'width '+HOLD_TIME+'ms linear'; f.style.width = '100%';
+  });
+}
+function cancelPreviewBar() {
+  var f = document.getElementById('key-preview-fill');
+  f.style.transition = 'none'; f.style.width = '0%';
+}
+
+function updateDisplay() {
+  document.getElementById('display-text').textContent = typed;
+  document.getElementById('cursor-blink').style.display = typed.length > 0 ? 'none' : 'inline';
+}
+
+function deleteLast() {
+  if (typed.length > 0) { typed = typed.slice(0,-1); updateDisplay(); searchContacts(); vibrate(20); }
+}
+
+function clearDisplay() {
+  if (typed.length > 0) { typed = typed.slice(0,-1); updateDisplay(); searchContacts(); vibrate(20); }
+}
+
+function searchContacts() {
+  var c = document.getElementById('search-results'); c.innerHTML = '';
+  selectedContact = null;
+  filteredContacts = [];
+  contactIdx = 0;
+  if (typed.trim().length === 0) return;
+  var q = typed.trim().toUpperCase();
+  filteredContacts = contacts.filter(function(ct) {
+    var words = ct.name.toUpperCase().split(/\s+/);
+    return words.some(function(w) { return w.indexOf(q) === 0; }) ||
+           ct.number.replace(/\s/g,'').indexOf(q) === 0;
+  });
+  if (filteredContacts.length > 0) {
+    contactIdx = 0;
+    showCurrentContact();
+  }
+}
+
+function showCurrentContact() {
+  var c = document.getElementById('search-results'); c.innerHTML = '';
+  if (filteredContacts.length === 0) { selectedContact = null; return; }
+  selectedContact = filteredContacts[contactIdx];
+  var d = document.createElement('div');
+  d.className = 'search-result';
+  d.innerHTML = '<span class="search-result-name">'+selectedContact.name+'</span>' +
+    '<span class="search-result-number">'+selectedContact.number+'</span>' +
+    (filteredContacts.length > 1 ? '<div id="contact-index">'+(contactIdx+1)+' / '+filteredContacts.length+' ▲▼</div>' : '');
+  c.appendChild(d);
+}
+
+function navigateContact(dir) {
+  if (filteredContacts.length <= 1) return;
+  vibrate(20);
+  contactIdx += dir;
+  if (contactIdx < 0) contactIdx = filteredContacts.length - 1;
+  if (contactIdx >= filteredContacts.length) contactIdx = 0;
+  showCurrentContact();
+}
+
+function callSelected() {
+  var number='', name='';
+  if (selectedContact) { number=selectedContact.number; name=selectedContact.name; }
+  else if (typed.length>0 && /^\d/.test(typed)) { number=typed; }
+  else { vibrate(100); return; }
+  vibrate(50);
+  document.getElementById('call-contact-name').textContent = name;
+  document.getElementById('call-number').textContent = number;
+  document.getElementById('call-status').textContent = 'Llamando...';
+  document.getElementById('call-timer').textContent = '00:00';
+  document.getElementById('call-screen').classList.remove('hidden');
+  callSeconds = 0;
+  callTimerInterval = setInterval(function() {
+    callSeconds++;
+    document.getElementById('call-timer').textContent =
+      String(Math.floor(callSeconds/60)).padStart(2,'0')+':'+String(callSeconds%60).padStart(2,'0');
+    if (callSeconds>=3) document.getElementById('call-status').textContent='En llamada';
+  }, 1000);
+  window.location.href = 'tel:' + number.replace(/\s/g,'');
+}
+
+function endCall() {
+  clearInterval(callTimerInterval);
+  document.getElementById('call-screen').classList.add('hidden');
+  typed=''; updateDisplay();
+  document.getElementById('search-results').innerHTML='';
+  selectedContact=null; vibrate(30);
+}
+
+function vibrate(ms) { if(navigator.vibrate) navigator.vibrate(ms); }
+
+var audioCtx=null;
+function playClick() {
+  try {
+    if(!audioCtx) audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+    var o=audioCtx.createOscillator(), g=audioCtx.createGain();
+    g.gain.value=0.08; o.frequency.value=1200; o.type='sine';
+    o.connect(g); g.connect(audioCtx.destination);
+    o.start(); setTimeout(function(){o.stop();},50);
+  } catch(e){}
+}
+
+function loadContacts() {
+  contacts = [
+    {name:'María García', number:'310 123 4567'},
+    {name:'Juan Pérez', number:'320 987 6543'},
+    {name:'Doctor Ramírez', number:'315 678 1234'},
+    {name:'Ana López', number:'300 555 1234'},
+    {name:'Carlos Muñoz', number:'312 444 5678'},
+    {name:'Emergencias', number:'123'},
+    {name:'Bomberos', number:'119'},
+    {name:'Policía', number:'112'}
+  ];
+}
+
+// Salir: mantener botón salir 3 seg
+(function(){
+  var h=null;
+  var el=document.getElementById('exit-hint');
+  if(el){
+    el.addEventListener('touchstart',function(){
+      h=setTimeout(function(){ vibrate(200);
+        if(confirm('¿Salir de Celular?')){
+          try{if(window.Capacitor&&window.Capacitor.Plugins.App)window.Capacitor.Plugins.App.exitApp();}catch(e){}
+        }
+      },3000);
+    });
+    el.addEventListener('touchend',function(){clearTimeout(h);});
+    el.addEventListener('mousedown',function(){
+      h=setTimeout(function(){ vibrate(200); alert('Salir de Celular'); },3000);
+    });
+    el.addEventListener('mouseup',function(){clearTimeout(h);});
+  }
+})();
+
+updateClock(); updateBattery();
+setInterval(updateClock,10000); setInterval(updateBattery,60000);
+loadContacts();
+document.addEventListener('DOMContentLoaded', initKeyboard);
+if(document.readyState!=='loading') initKeyboard();
+  </script>
 </body>
 </html>
