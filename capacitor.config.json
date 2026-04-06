@@ -1,0 +1,9 @@
+{
+  "appId": "com.facilfono.launcher",
+  "appName": "Celular",
+  "webDir": "www",
+  "android": {
+    "allowMixedContent": false,
+    "backgroundColor": "#F5F0EB"
+  }
+}

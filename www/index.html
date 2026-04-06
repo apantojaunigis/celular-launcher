@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="color-scheme" content="dark">
+  <title>Celular</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+    <!-- PANTALLA LCD -->
+    <div id="screen">
+      <div id="status-bar">
+        <span id="signal">&#9642;&#9642;&#9642;&#9642;</span>
+        <span id="clock">10:30</span>
+        <span id="battery">&#9608; 85%</span>
+      </div>
+      <div id="date-display"></div>
+
+      <!-- VISOR: lo que se escribe -->
+      <div id="display">
+        <span id="display-text"></span>
+        <span id="cursor-blink">|</span>
+      </div>
+
+      <!-- RESULTADO DE BUSQUEDA DE CONTACTOS -->
+      <div id="search-results"></div>
+    </div>
+
+    <!-- INDICADOR DE TECLA PRESIONADA -->
+    <div id="key-preview" class="hidden">
+      <span id="key-preview-char"></span>
+      <div id="key-preview-bar"><div id="key-preview-fill"></div></div>
+    </div>
+
+    <!-- FILA DE ACCION: LLAMAR + BORRAR -->
+    <div id="action-row">
+      <button id="btn-call" class="action-btn call-green" onclick="callSelected()">
+        <svg viewBox="0 0 24 24" width="24" height="24"><path fill="#fff" d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2a1.003 1.003 0 011.01-.24c1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.1.31.03.66-.25 1.02l-2.2 2.2z"/></svg>
+        <span>Llamar</span>
+      </button>
+      <button id="btn-delete" class="action-btn delete-btn" onclick="deleteLast()">
+        <span>&larr;</span>
+        <span>Borrar</span>
+      </button>
+      <button id="btn-mode" class="action-btn mode-btn" onclick="toggleMode()">
+        <span id="mode-icon">123</span>
+        <span id="mode-label">Números</span>
+      </button>
+    </div>
+
+    <!-- TECLADO DE LETRAS -->
+    <div id="keyboard" class="kb-letters">
+      <!-- Fila 1: Q W E R T Y U I O P -->
+      <div class="kb-row">
+        <button class="kb-key" data-char="Q">Q</button>
+        <button class="kb-key" data-char="W">W</button>
+        <button class="kb-key" data-char="E">E</button>
+        <button class="kb-key" data-char="R">R</button>
+        <button class="kb-key" data-char="T">T</button>
+        <button class="kb-key" data-char="Y">Y</button>
+        <button class="kb-key" data-char="U">U</button>
+        <button class="kb-key" data-char="I">I</button>
+        <button class="kb-key" data-char="O">O</button>
+        <button class="kb-key" data-char="P">P</button>
+      </div>
+      <!-- Fila 2: A S D F G H J K L -->
+      <div class="kb-row">
+        <div class="kb-spacer-half"></div>
+        <button class="kb-key" data-char="A">A</button>
+        <button class="kb-key" data-char="S">S</button>
+        <button class="kb-key" data-char="D">D</button>
+        <button class="kb-key" data-char="F">F</button>
+        <button class="kb-key" data-char="G">G</button>
+        <button class="kb-key" data-char="H">H</button>
+        <button class="kb-key" data-char="J">J</button>
+        <button class="kb-key" data-char="K">K</button>
+        <button class="kb-key" data-char="L">L</button>
+        <div class="kb-spacer-half"></div>
+      </div>
+      <!-- Fila 3: Z X C V B N M -->
+      <div class="kb-row">
+        <div class="kb-spacer"></div>
+        <button class="kb-key" data-char="Z">Z</button>
+        <button class="kb-key" data-char="X">X</button>
+        <button class="kb-key" data-char="C">C</button>
+        <button class="kb-key" data-char="V">V</button>
+        <button class="kb-key" data-char="B">B</button>
+        <button class="kb-key" data-char="N">N</button>
+        <button class="kb-key" data-char="M">M</button>
+        <div class="kb-spacer"></div>
+      </div>
+      <!-- Fila 4: ESPACIO -->
+      <div class="kb-row">
+        <button class="kb-key kb-space" data-char=" ">ESPACIO</button>
+      </div>
+    </div>
+
+    <!-- TECLADO DE NUMEROS (oculto por defecto) -->
+    <div id="numpad" class="hidden">
+      <div class="kb-row">
+        <button class="kb-key kb-num" data-char="1">1</button>
+        <button class="kb-key kb-num" data-char="2">2</button>
+        <button class="kb-key kb-num" data-char="3">3</button>
+      </div>
+      <div class="kb-row">
+        <button class="kb-key kb-num" data-char="4">4</button>
+        <button class="kb-key kb-num" data-char="5">5</button>
+        <button class="kb-key kb-num" data-char="6">6</button>
+      </div>
+      <div class="kb-row">
+        <button class="kb-key kb-num" data-char="7">7</button>
+        <button class="kb-key kb-num" data-char="8">8</button>
+        <button class="kb-key kb-num" data-char="9">9</button>
+      </div>
+      <div class="kb-row">
+        <button class="kb-key kb-num" data-char="*">*</button>
+        <button class="kb-key kb-num" data-char="0">0</button>
+        <button class="kb-key kb-num" data-char="#">#</button>
+      </div>
+    </div>
+
+    <!-- SALIR (oculto) -->
+    <div id="exit-hint">Mantener * 3 seg &rarr; salir</div>
+  </div>
+
+  <!-- PANTALLA DE LLAMADA ACTIVA -->
+  <div id="call-screen" class="hidden">
+    <div id="call-info">
+      <div id="call-status">Llamando...</div>
+      <div id="call-contact-name"></div>
+      <div id="call-number"></div>
+      <div id="call-timer">00:00</div>
+    </div>
+    <div id="call-actions">
+      <button id="call-end" class="action-btn call-red call-end-big" onclick="endCall()">
+        <svg viewBox="0 0 24 24" width="36" height="36"><path fill="#fff" d="M12 9c-1.6 0-3.15.25-4.6.72v3.1c0 .39-.23.74-.56.9-.98.49-1.87 1.12-2.66 1.85-.18.18-.43.28-.7.28-.28 0-.53-.11-.71-.29L.29 13.08a.956.956 0 010-1.36C3.42 8.63 7.46 7 12 7s8.58 1.63 11.71 4.72c.18.18.29.43.29.71 0 .28-.11.53-.29.71l-2.48 2.48c-.18.18-.43.29-.71.29-.27 0-.52-.1-.7-.28-.79-.73-1.68-1.36-2.66-1.85a.994.994 0 01-.56-.9v-3.1C15.15 9.25 13.6 9 12 9z"/></svg>
+        <small>Colgar</small>
+      </button>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
