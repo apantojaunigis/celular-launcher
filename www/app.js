@@ -165,8 +165,11 @@ function searchContacts() {
 
   var query = typed.trim().toUpperCase();
   var results = contacts.filter(function(c) {
-    return c.name.toUpperCase().includes(query) ||
-           c.number.replace(/\s/g, '').includes(query);
+    var words = c.name.toUpperCase().split(/\s+/);
+    var matchesName = words.some(function(word) {
+      return word.indexOf(query) === 0;
+    });
+    return matchesName || c.number.replace(/\s/g, '').indexOf(query) === 0;
   });
 
   results = results.slice(0, 3);
